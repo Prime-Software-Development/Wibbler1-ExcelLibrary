@@ -1,7 +1,7 @@
 {
 	"name": "Trunk/ExcelLibrary",
 	"require": {
-		"phpoffice/phpexcel": "dev-master"
+		"phpoffice/phpexcel": "1.*"
 	},
 	"autoload":{
 		"classmap": ["/src/"]
