@@ -125,7 +125,13 @@ class Excel extends \Trunk\Wibbler\Modules\base  {
 			$this->sheet[ $table_index ]->add_row_format( $row_index, $tr );
 
 			foreach ( $tr->getElementsByTagName( 'td' ) as $col_index => $td ) {
-				$xl[ $row_index ][ $col_index ] = "" . $td->textContent;
+                $formula = $td->getAttribute('data-formula');
+                if ( $formula != "" ) {
+    				$xl[ $row_index ][ $col_index ] = "" . $formula;
+                }
+                else {
+    				$xl[ $row_index ][ $col_index ] = "" . $td->textContent;
+                }
 
 				$this->sheet[ $table_index ]->add_cell_format( $row_index . '.' . $col_index, $td );
 			}
@@ -395,7 +401,4 @@ class Excel extends \Trunk\Wibbler\Modules\base  {
 	}
 }
 
-
 /* End of file Excel.php */
-
-
