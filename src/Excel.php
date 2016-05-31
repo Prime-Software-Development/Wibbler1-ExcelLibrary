@@ -1,8 +1,8 @@
 <?php
 namespace Trunk\ExcelLibrary\Excel;
-require_once( __dir__ . '/ExcelSheet.php');
+require_once( __dir__ . '/ExcelSheet.php' );
 
-class Excel extends \Trunk\Wibbler\Modules\base  {
+class Excel extends \Trunk\Wibbler\Modules\base {
 
 	var $author = "Wibbler";
 	var $title = "Wibbler Report";
@@ -12,47 +12,43 @@ class Excel extends \Trunk\Wibbler\Modules\base  {
 	 * @var ExcelSheet[]
 	 */
 	var $sheet;
-	
+
 	var $sheetCount = 1;
 
 	public function __construct() {
-	/*
-	 *		memory set at 1GB to cater for for very large memory requirements
-	 */
-		ini_set('memory_limit','1024M');
-	}
-	
-	public function Excel () {
+		/*
+		 *		memory set at 1GB to cater for for very large memory requirements
+		 */
+		ini_set( 'memory_limit', '1024M' );
 	}
 
-	
-	public function loadFromHTML($html)
-	{
+	public function Excel() {
+	}
+
+	public function loadFromHTML( $html ) {
 		$a = new \DOMDocument();
-		$a->loadHTML($html);
-		
-		foreach ($a->getElementsByTagName('table') as $table_index => $table)
-		{
-			if ($table->hasAttribute('data-excel-sheet'))
-			{
-				$this->sheet[$table_index] = new \Trunk\ExcelLibrary\Excel\ExcelSheet();
-				$this->sheet[$table_index]->sheetTitle = $table->getAttribute('data-excel-sheet-title');
-				$this->sheet[$table_index]->sheetDescription = $table->getAttribute('data-excel-sheet-description');
+		$a->loadHTML( $html );
+
+		foreach ( $a->getElementsByTagName( 'table' ) as $table_index => $table ) {
+			if ( $table->hasAttribute( 'data-excel-sheet' ) ) {
+				$this->sheet[ $table_index ] = new \Trunk\ExcelLibrary\Excel\ExcelSheet();
+				$this->sheet[ $table_index ]->sheetTitle = $table->getAttribute( 'data-excel-sheet-title' );
+				$this->sheet[ $table_index ]->sheetDescription = $table->getAttribute( 'data-excel-sheet-description' );
 
 				// Get the thead's row object (only the first one though)
-				$thead = $table->getElementsByTagName( 'thead' )->item(0);
-				$this->sheet[$table_index]->num_header_rows = $thead->getElementsByTagName( 'tr' )->length ;
+				$thead = $table->getElementsByTagName( 'thead' )->item( 0 );
+				$this->sheet[ $table_index ]->num_header_rows = $thead->getElementsByTagName( 'tr' )->length;
 
 				// Process the header rows
 				$this->sheet[ $table_index ]->end_column_number = $this->_process_header( $table_index, $thead );
 
 				// Get the tbody
-				$tbody = $table->getElementsByTagName( 'tbody' )->item(0);
+				$tbody = $table->getElementsByTagName( 'tbody' )->item( 0 );
 				// Process the body data into the array of data to show
 				$this->_process_body( $table_index, $tbody );
 
 				// Try to find the tfoot (often won't exist
-				$tfoot = $table->getElementsByTagName( 'tfoot' )->item(0);
+				$tfoot = $table->getElementsByTagName( 'tfoot' )->item( 0 );
 				// Process the footer data into the array of data to show
 				$this->_process_footer( $table_index, $tfoot );
 			}
@@ -68,13 +64,13 @@ class Excel extends \Trunk\Wibbler\Modules\base  {
 	private function _process_header( $table_index, \DOMNode $thead ) {
 
 		$num_data_columns = 0;
-		$header_rows = [];
+		$header_rows = [ ];
 
 		foreach ( $thead->getElementsByTagName( 'tr' ) as $row_index => $tr ) {
 
 			// Create an empty row of cells for this header row
-			if ( ! isset( $header_rows[ $row_index ] ) ) {
-				$header_rows[ $row_index ] = [];
+			if ( !isset( $header_rows[ $row_index ] ) ) {
+				$header_rows[ $row_index ] = [ ];
 			}
 
 			$current_col = 0;
@@ -92,7 +88,7 @@ class Excel extends \Trunk\Wibbler\Modules\base  {
 				}
 
 				while ( $row_index == 1 && isset( $header_rows[ 1 ][ $current_col ] ) && $header_rows[ 1 ][ $current_col ] == "Span" ) {
-					$current_col ++;
+					$current_col++;
 				}
 
 				$header_cell = new ExcelHeader( $text, $current_col, $num_cols, $num_rows );
@@ -125,13 +121,13 @@ class Excel extends \Trunk\Wibbler\Modules\base  {
 			$this->sheet[ $table_index ]->add_row_format( $row_index, $tr );
 
 			foreach ( $tr->getElementsByTagName( 'td' ) as $col_index => $td ) {
-                $formula = $td->getAttribute('data-formula');
-                if ( $formula != "" ) {
-    				$xl[ $row_index ][ $col_index ] = "" . $formula;
-                }
-                else {
-    				$xl[ $row_index ][ $col_index ] = "" . $td->textContent;
-                }
+				$formula = $td->getAttribute( 'data-formula' );
+				if ( $formula != "" ) {
+					$xl[ $row_index ][ $col_index ] = "" . $formula;
+				}
+				else {
+					$xl[ $row_index ][ $col_index ] = "" . $td->textContent;
+				}
 
 				$this->sheet[ $table_index ]->add_cell_format( $row_index . '.' . $col_index, $td );
 			}
@@ -152,14 +148,14 @@ class Excel extends \Trunk\Wibbler\Modules\base  {
 		}
 
 		// Get the footer row (only one)
-		$footer_row = $tfoot->getElementsByTagName( 'tr' )->item(0);
+		$footer_row = $tfoot->getElementsByTagName( 'tr' )->item( 0 );
 
 		// If there is now footer row
 		if ( $footer_row == null ) {
 			return;
 		}
 
-		$num_rows = count( $this->sheet[$table_index]->data );
+		$num_rows = count( $this->sheet[ $table_index ]->data );
 		$footer_format = new ExcelFormats();
 		$footer_format->background_colour = 'E0E0FF';
 		$footer_format->bold = true;
@@ -167,91 +163,85 @@ class Excel extends \Trunk\Wibbler\Modules\base  {
 
 		foreach ( $footer_row->getElementsByTagName( 'td' ) as $col_index => $tf ) {
 			if ( !empty( $tf->textContent ) ) {
-				$this->sheet[$table_index]->data[ $num_rows ][ $col_index ] = "" . $tf->textContent;
+				$this->sheet[ $table_index ]->data[ $num_rows ][ $col_index ] = "" . $tf->textContent;
 			}
 		}
 	}
 
-	public function create($output_to = null, $report_name = 'IMP_Report')
-	{
+	public function create( $output_to = null, $report_name = 'IMP_Report' ) {
 		$this->title = $report_name;
 
-		while (ob_get_level() > 0) {
+		while ( ob_get_level() > 0 ) {
 			ob_end_clean();
 		}
 
-/*
-		// Turn off error reporting
-		ini_set('display_errors', 0);
-		ini_set('error_reporting', ~E_ALL);
-*/
-		/** PHPExcel -	prevent recursion issues */
-		if(!class_exists('PHPExcel'))
-		{
+		/*
+				// Turn off error reporting
+				ini_set('display_errors', 0);
+				ini_set('error_reporting', ~E_ALL);
+		*/
+		/** PHPExcel -    prevent recursion issues */
+		if ( !class_exists( 'PHPExcel' ) ) {
 			require 'PHPExcel/PHPExcel.php';
 		}
-		
-		
-		/** PHPExcel_Writer_Excel2007  -	prevent recursion issues */
-		if(!class_exists('PHPExcel_Writer_Excel2007'))
-		{
+
+		/** PHPExcel_Writer_Excel2007  -    prevent recursion issues */
+		if ( !class_exists( 'PHPExcel_Writer_Excel2007' ) ) {
 			include 'PHPExcel/PHPExcel/Writer/Excel2007.php';
 		}
 
 		// Create new PHPExcel object
 		$objPHPExcel = new \PHPExcel();
 		// Set properties
-		$objPHPExcel->getProperties()->setCreator($this->author);
-		$objPHPExcel->getProperties()->setLastModifiedBy($this->author);
-		$objPHPExcel->getProperties()->setTitle($this->title);
-		$objPHPExcel->getProperties()->setSubject($this->title);
-		$objPHPExcel->getProperties()->setDescription($this->description);
+		$objPHPExcel->getProperties()->setCreator( $this->author );
+		$objPHPExcel->getProperties()->setLastModifiedBy( $this->author );
+		$objPHPExcel->getProperties()->setTitle( $this->title );
+		$objPHPExcel->getProperties()->setSubject( $this->title );
+		$objPHPExcel->getProperties()->setDescription( $this->description );
 
-		$i=0;
-		foreach ($this->sheet as $thisSheet)
-		{
+		$current_sheet_index = 0;
+		foreach ( $this->sheet as $thisSheet ) {
 			//Add new sheet
-			if ($i > 0)
+			if ( $current_sheet_index > 0 )
 				$objPHPExcel->createSheet();
-			
-			$objPHPExcel->setActiveSheetIndex($i);
+
+			$objPHPExcel->setActiveSheetIndex( $current_sheet_index );
 			$active_sheet = $objPHPExcel->getActiveSheet();
 
 			$endColumnLetter = $thisSheet->get_end_column_letter();
 
-			if ($thisSheet->sheetTitle == "")
+			if ( $thisSheet->sheetTitle == "" )
 				$thisSheet->sheetTitle = $this->title;
 
 			//Add head rows
 			// Merge the cells
-			$active_sheet->mergeCells("A1:" . $endColumnLetter . "1");
-			$active_sheet->mergeCells("A2:" . $endColumnLetter . "2");
-			$active_sheet->mergeCells("A3:" . $endColumnLetter . "3");
+			$active_sheet->mergeCells( "A1:" . $endColumnLetter . "1" );
+			$active_sheet->mergeCells( "A2:" . $endColumnLetter . "2" );
+			$active_sheet->mergeCells( "A3:" . $endColumnLetter . "3" );
 
 			// Set the header cell contents
-			$active_sheet->SetCellValue("A1", $this->title);
-			$active_sheet->SetCellValue("A2", $thisSheet->sheetTitle);
-			$active_sheet->SetCellValue("A3", $thisSheet->sheetDescription);
+			$active_sheet->SetCellValue( "A1", $this->title );
+			$active_sheet->SetCellValue( "A2", $thisSheet->sheetTitle );
+			$active_sheet->SetCellValue( "A3", $thisSheet->sheetDescription );
 
 			// Set the background styling for the header cells
-			$active_sheet->getStyle("A1:A4")->getFill()->setFillType(\PHPExcel_Style_Fill::FILL_SOLID);
-			$active_sheet->getStyle("A1:A4")->getFill()->getStartColor()->setARGB(\PHPExcel_Style_Color::COLOR_WHITE);
-
+			$active_sheet->getStyle( "A1:A4" )->getFill()->setFillType( \PHPExcel_Style_Fill::FILL_SOLID );
+			$active_sheet->getStyle( "A1:A4" )->getFill()->getStartColor()->setARGB( \PHPExcel_Style_Color::COLOR_WHITE );
 
 			// Style the header cells
-			$active_sheet->getStyle('A1')->getFont()->setSize(20);
-			$active_sheet->getStyle('A1')->getFont()->setBold(true);
-			$active_sheet->getStyle('A2')->getFont()->setSize(14);
-			$active_sheet->getStyle('A2')->getFont()->setBold(true);
+			$active_sheet->getStyle( 'A1' )->getFont()->setSize( 20 );
+			$active_sheet->getStyle( 'A1' )->getFont()->setBold( true );
+			$active_sheet->getStyle( 'A2' )->getFont()->setSize( 14 );
+			$active_sheet->getStyle( 'A2' )->getFont()->setBold( true );
 
 			// Define which row the table headers are
 			$headerRowNum = 5;
 			$current_row_num = $headerRowNum;
 
-			foreach( $thisSheet->header_rows as $header_row ) {
+			foreach ( $thisSheet->header_rows as $header_row ) {
 
 				$column_index = 0;
-				foreach( $header_row as $header_cell ) {
+				foreach ( $header_row as $header_cell ) {
 
 					if ( $header_cell == "Span" )
 						continue;
@@ -259,7 +249,7 @@ class Excel extends \Trunk\Wibbler\Modules\base  {
 					$columnLetter = ExcelSheet::get_letter_from_number( $header_cell->start_col );
 
 					//Set column header
-					$active_sheet->SetCellValue($columnLetter . $current_row_num, $header_cell->title );
+					$active_sheet->SetCellValue( $columnLetter . $current_row_num, $header_cell->title );
 
 					// If the column is set to span multiple cells
 					if ( $header_cell->col_span > 1 || $header_cell->row_span > 1 ) {
@@ -272,66 +262,66 @@ class Excel extends \Trunk\Wibbler\Modules\base  {
 					$column_index += $header_cell->col_span;
 				}
 
-				$current_row_num ++;
+				$current_row_num++;
 			}
 
 			// Set the formatting for all of the header cells in one call
 			$header_range = "A" . $headerRowNum . ":" . $thisSheet->end_column_letter . ( $headerRowNum + $thisSheet->num_header_rows - 1 );
-			$active_sheet->getStyle( $header_range )->getFill()->setFillType(\PHPExcel_Style_Fill::FILL_SOLID);
-			$active_sheet->getStyle( $header_range )->getFill()->getStartColor()->setARGB('FFE0E0FF');
-			$active_sheet->getStyle( $header_range )->getFont()->setBold(true);
+			$active_sheet->getStyle( $header_range )->getFill()->setFillType( \PHPExcel_Style_Fill::FILL_SOLID );
+			$active_sheet->getStyle( $header_range )->getFill()->getStartColor()->setARGB( 'FFE0E0FF' );
+			$active_sheet->getStyle( $header_range )->getFont()->setBold( true );
 
 			// Loop through each column outputting the data
-			for( $i = 0; $i < $thisSheet->end_column_number; $i++ ) {
+			for ( $col = 0; $col < $thisSheet->end_column_number; $col++ ) {
 				// Reset the first row to use
 				$rowNumber = $headerRowNum + $thisSheet->num_header_rows;
 				// Output the column's data
-				$rowNumber = $this->_set_column_data( $thisSheet, $active_sheet, $i, $rowNumber );
+				$rowNumber = $this->_set_column_data( $thisSheet, $active_sheet, $col, $rowNumber );
 			}
 
-			$active_sheet->getStyle("A" . ($rowNumber) . ":" . $endColumnLetter . ($rowNumber) )->getFill()->setFillType(\PHPExcel_Style_Fill::FILL_SOLID);
-			$active_sheet->getStyle("A" . ($rowNumber) . ":" . $endColumnLetter . ($rowNumber) )->getFill()->getStartColor()->setARGB('FFE0E0FF');
+			$active_sheet->getStyle( "A" . ( $rowNumber ) . ":" . $endColumnLetter . ( $rowNumber ) )->getFill()->setFillType( \PHPExcel_Style_Fill::FILL_SOLID );
+			$active_sheet->getStyle( "A" . ( $rowNumber ) . ":" . $endColumnLetter . ( $rowNumber ) )->getFill()->getStartColor()->setARGB( 'FFE0E0FF' );
 
-			$active_sheet->mergeCells("A" . ($rowNumber+2) . ":" . $endColumnLetter . ($rowNumber+2));
-			$active_sheet->SetCellValue("A" . ($rowNumber+2) , "Created " . date('d/m/Y H:i'));
-	
+			$active_sheet->mergeCells( "A" . ( $rowNumber + 2 ) . ":" . $endColumnLetter . ( $rowNumber + 2 ) );
+			$active_sheet->SetCellValue( "A" . ( $rowNumber + 2 ), "Created " . date( 'd/m/Y H:i' ) );
+
 			// Name sheet
-			$active_sheet->setTitle(($thisSheet->tabTitle == null ? $thisSheet->sheetTitle : $thisSheet->tabTitle));
+			$active_sheet->setTitle( ( $thisSheet->tabTitle == null ? $thisSheet->sheetTitle : $thisSheet->tabTitle ) );
 
 			//Set sheet priting properties
-			$active_sheet->getHeaderFooter()->setOddHeader('&L&B' . $thisSheet->sheetTitle . '&RPrinted on &D');
-			$active_sheet->getHeaderFooter()->setOddFooter('&L&B' . $objPHPExcel->getProperties()->getTitle() . '&RPage &P of &N');
-			$active_sheet->getPageSetup()->setFitToPage(true);
-			$active_sheet->getPageSetup()->setFitToWidth(1);
-			$active_sheet->getPageSetup()->setFitToHeight(0);
-			
-			$i++;
+			$active_sheet->getHeaderFooter()->setOddHeader( '&L&B' . $thisSheet->sheetTitle . '&RPrinted on &D' );
+			$active_sheet->getHeaderFooter()->setOddFooter( '&L&B' . $objPHPExcel->getProperties()->getTitle() . '&RPage &P of &N' );
+			$active_sheet->getPageSetup()->setFitToPage( true );
+			$active_sheet->getPageSetup()->setFitToWidth( 1 );
+			$active_sheet->getPageSetup()->setFitToHeight( 0 );
+
+			$current_sheet_index++;
 		}
 
 		//Set active sheet to first one
-		$objPHPExcel->setActiveSheetIndex(0);
+		$objPHPExcel->setActiveSheetIndex( 0 );
 
 		// Create writer object
-		$writer = new \PHPExcel_Writer_Excel2007($objPHPExcel);
+		$writer = new \PHPExcel_Writer_Excel2007( $objPHPExcel );
 
-		if ($output_to == null) {
+		if ( $output_to == null ) {
 			//Set headers so output is file
-			header('Content-type: application/ms-excel');
+			header( 'Content-type: application/ms-excel' );
 			$now = new \DateTime();
-			header('Content-Disposition: attachment; filename="' . $report_name . ' ' . $now->format('Y-m-d H:i') . '.xlsx"');
-			flush();		
+			header( 'Content-Disposition: attachment; filename="' . $report_name . ' ' . $now->format( 'Y-m-d H:i' ) . '.xlsx"' );
+			flush();
 
 			//Output document
-			$writer->save('php://output');
+			$writer->save( 'php://output' );
 		}
 		else {
-                    
+
 			// Output to the given file
-			$writer->save($output_to);
+			$writer->save( $output_to );
 		}
-		
-		unset($this->objPHPExcel);
-		unset($writer);
+
+		unset( $this->objPHPExcel );
+		unset( $writer );
 #		$this->objPHPExcel = Null ;
 #		$writer = Null ;
 	}
@@ -374,7 +364,8 @@ class Excel extends \Trunk\Wibbler\Modules\base  {
 							$active_excel_sheet->SetCellValue( $columnLetter . $rowNumber, $dataObject[ $columnDataKey ] );
 							break;
 					}
-				} else {
+				}
+				else {
 					//Enter data for this row
 					$active_excel_sheet->SetCellValue( $columnLetter . $rowNumber, isset( $dataObject[ $columnDataKey ] ) ? $dataObject[ $columnDataKey ] : "" );
 				}
@@ -390,13 +381,12 @@ class Excel extends \Trunk\Wibbler\Modules\base  {
 		return $rowNumber;
 	}
 
-	function time_to_excel($time='00:00:00')
-	{
-		list($hours, $mins, $secs) = explode(':', $time);
-		$seconds = ($hours * 3600 ) + ($mins * 60 ) + $secs;
+	function time_to_excel( $time = '00:00:00' ) {
+		list( $hours, $mins, $secs ) = explode( ':', $time );
+		$seconds = ( $hours * 3600 ) + ( $mins * 60 ) + $secs;
 
 		$day_seconds = 24 * 60 * 60;
-		
+
 		return $seconds / $day_seconds;
 	}
 }
