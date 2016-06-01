@@ -1,0 +1,19 @@
+{
+	"name": "Trunk/ExcelLibrary",
+	"type": "library",
+	"description": "TrunkSoftware Excel Library",
+	"homepage": "http://www.trunknetworks.com/",
+	"authors": [
+		{
+			"name": "Chris Weller",
+			"email": "chris.weller@trunknetworks.com"
+		}
+	],
+	"require": {
+		"php": ">=5.5.9",
+		"phpoffice/phpexcel": "1.*"
+	},
+	"autoload":{
+		"classmap": ["/src/"]
+	}
+}
