@@ -11,7 +11,7 @@
 	],
 	"require": {
 		"php": ">=5.5.9",
-		"phpoffice/phpexcel": "@prefer-stable"
+		"phpoffice/phpexcel": "1.9.*@dev-master"
 	},
 	"autoload":{
 		"classmap": ["/src/"]
