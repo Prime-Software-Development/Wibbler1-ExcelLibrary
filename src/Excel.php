@@ -82,12 +82,26 @@ class Excel extends \Trunk\Wibbler\Modules\base {
 				$text = $th->textContent;
 
 				// If we have row spanning
-				if ( $num_rows > 1 ) {
+				/*if ( $num_rows > 1 ) {
 					// Note on the second row that this cell has already been spanned
 					$header_rows[ 1 ][ $current_col ] = "Span";
 				}
 
 				while ( $row_index == 1 && isset( $header_rows[ 1 ][ $current_col ] ) && $header_rows[ 1 ][ $current_col ] == "Span" ) {
+					$current_col++;
+				}*/
+
+				for( $i = $row_index; $i < ($row_index+$num_rows) ; $i++ ) {
+					if( $num_cols ) {
+						for( $j = $current_col; $j < ($current_col+$num_cols); $j++ ) {
+							$header_rows[ $i ][ $j ] = "Span";
+						}
+					} else {
+						$header_rows[ $i ][ $current_col ] = "Span";
+					}
+				}
+
+				while ( $row_index > 0 && isset( $header_rows[ $row_index ][ $current_col ] ) && $header_rows[ $row_index ][ $current_col ] == "Span" ) {
 					$current_col++;
 				}
 
