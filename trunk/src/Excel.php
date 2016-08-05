@@ -91,6 +91,10 @@ class Excel extends \Trunk\Wibbler\Modules\base {
 					$current_col++;
 				}*/
 
+				while ( $row_index > 0 && isset( $header_rows[ $row_index ][ $current_col ] ) && $header_rows[ $row_index ][ $current_col ] == "Span" ) {
+					$current_col++;
+				}
+
 				for( $i = $row_index; $i < ($row_index+$num_rows) ; $i++ ) {
 					if( $num_cols ) {
 						for( $j = $current_col; $j < ($current_col+$num_cols); $j++ ) {
@@ -99,10 +103,6 @@ class Excel extends \Trunk\Wibbler\Modules\base {
 					} else {
 						$header_rows[ $i ][ $current_col ] = "Span";
 					}
-				}
-
-				while ( $row_index > 0 && isset( $header_rows[ $row_index ][ $current_col ] ) && $header_rows[ $row_index ][ $current_col ] == "Span" ) {
-					$current_col++;
 				}
 
 				$header_cell = new ExcelHeader( $text, $current_col, $num_cols, $num_rows );
