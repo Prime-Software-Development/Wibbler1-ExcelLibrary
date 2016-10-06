@@ -20,6 +20,9 @@ class Excel extends \Trunk\Wibbler\Modules\base {
 		 *		memory set at 1GB to cater for for very large memory requirements
 		 */
 		ini_set( 'memory_limit', '1024M' );
+
+		// prevent foreach error when there are no sheets
+		$this->sheet = array();
 	}
 
 	public function Excel() {
