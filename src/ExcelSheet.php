@@ -37,7 +37,7 @@ class ExcelSheet {
 			return $this->end_column_letter;
 
 		// If the number of columns is greater than 26
-		if ( $this->end_column_number > 26) {
+		/*if ( $this->end_column_number > 26) {
 			$num_round_alphabet = floor($this->end_column_number / 26);
 			$letter_number = $this->end_column_number - ( $num_round_alphabet * 26 );
 			$this->end_column_letter = chr( $letter_number + 64 );
@@ -45,7 +45,9 @@ class ExcelSheet {
 		}
 		else {
 			$this->end_column_letter = chr( $this->end_column_number + 64 );
-		}
+		}*/
+
+		$this->end_column_letter = \PHPExcel_Cell::stringFromColumnIndex($this->end_column_number);
 
 		return $this->end_column_letter;
 	}
