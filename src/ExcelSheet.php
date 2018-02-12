@@ -1,5 +1,8 @@
 <?php
 namespace Trunk\ExcelLibrary\Excel;
+
+use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
+
 class ExcelSheet {
 //https://github.com/PHPOffice/PHPExcel/blob/develop/Documentation/markdown/Overview/08-Recipes.md
 //https://github.com/PHPOffice/PHPExcel/blob/develop/Documentation/markdown/Overview/11-Appendices.md
@@ -47,7 +50,7 @@ class ExcelSheet {
 			$this->end_column_letter = chr( $this->end_column_number + 64 );
 		}*/
 
-		$this->end_column_letter = \PHPExcel_Cell::stringFromColumnIndex($this->end_column_number);
+		$this->end_column_letter = Coordinate::stringFromColumnIndex($this->end_column_number);
 
 		return $this->end_column_letter;
 	}
@@ -72,7 +75,7 @@ class ExcelSheet {
 
 		$this->row_formats[$row_number] = $format;
 	}
-	
+
 	/**
 	 * Adds formatting for the given cell, read from the given element (normally a td)
 	 * @param type $cell_key
@@ -187,4 +190,3 @@ class ExcelSheet {
 		}
 	}
 }
-

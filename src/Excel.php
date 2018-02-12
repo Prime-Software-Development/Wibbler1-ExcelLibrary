@@ -1,5 +1,10 @@
 <?php
 namespace Trunk\ExcelLibrary\Excel;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Style\Color;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+
 require_once( __dir__ . '/ExcelSheet.php' );
 
 class Excel extends \Trunk\Wibbler\Modules\base {
@@ -204,16 +209,16 @@ class Excel extends \Trunk\Wibbler\Modules\base {
 		*/
 		/** PHPExcel -    prevent recursion issues */
 		if ( !class_exists( 'PHPExcel' ) ) {
-			require 'PHPExcel/PHPExcel.php';
+#			require 'PHPExcel/PHPExcel.php';
 		}
 
 		/** PHPExcel_Writer_Excel2007  -    prevent recursion issues */
 		if ( !class_exists( 'PHPExcel_Writer_Excel2007' ) ) {
-			include 'PHPExcel/PHPExcel/Writer/Excel2007.php';
+#			include 'PHPExcel/PHPExcel/Writer/Excel2007.php';
 		}
 
 		// Create new PHPExcel object
-		$objPHPExcel = new \PHPExcel();
+		$objPHPExcel = new Spreadsheet();
 		// Set properties
 		$objPHPExcel->getProperties()->setCreator( $this->author );
 		$objPHPExcel->getProperties()->setLastModifiedBy( $this->author );
@@ -247,8 +252,8 @@ class Excel extends \Trunk\Wibbler\Modules\base {
 			$active_sheet->SetCellValue( "A3", $thisSheet->sheetDescription );
 
 			// Set the background styling for the header cells
-			$active_sheet->getStyle( "A1:A4" )->getFill()->setFillType( \PHPExcel_Style_Fill::FILL_SOLID );
-			$active_sheet->getStyle( "A1:A4" )->getFill()->getStartColor()->setARGB( \PHPExcel_Style_Color::COLOR_WHITE );
+			$active_sheet->getStyle( "A1:A4" )->getFill()->setFillType( Fill::FILL_SOLID );
+			$active_sheet->getStyle( "A1:A4" )->getFill()->getStartColor()->setARGB( Color::COLOR_WHITE );
 
 			// Style the header cells
 			$active_sheet->getStyle( 'A1' )->getFont()->setSize( 20 );
@@ -289,7 +294,7 @@ class Excel extends \Trunk\Wibbler\Modules\base {
 
 			// Set the formatting for all of the header cells in one call
 			$header_range = "A" . $headerRowNum . ":" . $thisSheet->end_column_letter . ( $headerRowNum + $thisSheet->num_header_rows - 1 );
-			$active_sheet->getStyle( $header_range )->getFill()->setFillType( \PHPExcel_Style_Fill::FILL_SOLID );
+			$active_sheet->getStyle( $header_range )->getFill()->setFillType( Fill::FILL_SOLID );
 			$active_sheet->getStyle( $header_range )->getFill()->getStartColor()->setARGB( 'FFE0E0FF' );
 			$active_sheet->getStyle( $header_range )->getFont()->setBold( true );
 
@@ -301,7 +306,7 @@ class Excel extends \Trunk\Wibbler\Modules\base {
 				$rowNumber = $this->_set_column_data( $thisSheet, $active_sheet, $col, $rowNumber );
 			}
 
-			$active_sheet->getStyle( "A" . ( $rowNumber ) . ":" . $endColumnLetter . ( $rowNumber ) )->getFill()->setFillType( \PHPExcel_Style_Fill::FILL_SOLID );
+			$active_sheet->getStyle( "A" . ( $rowNumber ) . ":" . $endColumnLetter . ( $rowNumber ) )->getFill()->setFillType( Fill::FILL_SOLID );
 			$active_sheet->getStyle( "A" . ( $rowNumber ) . ":" . $endColumnLetter . ( $rowNumber ) )->getFill()->getStartColor()->setARGB( 'FFE0E0FF' );
 
 			$active_sheet->mergeCells( "A" . ( $rowNumber + 2 ) . ":" . $endColumnLetter . ( $rowNumber + 2 ) );
@@ -324,7 +329,7 @@ class Excel extends \Trunk\Wibbler\Modules\base {
 		$objPHPExcel->setActiveSheetIndex( 0 );
 
 		// Create writer object
-		$writer = new \PHPExcel_Writer_Excel2007( $objPHPExcel );
+		$writer = new Xlsx( $objPHPExcel );
 
 		if ( $output_to == null ) {
 			//Set headers so output is file
