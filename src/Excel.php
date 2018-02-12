@@ -84,6 +84,11 @@ class Excel extends \Trunk\Wibbler\Modules\base {
 				$num_rows = $th->getAttribute( 'rowspan' );
 				$text = $th->textContent;
 
+				if ( empty( $num_cols ) )
+					$num_cols = 1;
+				if ( empty( $num_rows ) )
+					$num_rows = 1;
+
 				// If we have row spanning
 				/*if ( $num_rows > 1 ) {
 					// Note on the second row that this cell has already been spanned
@@ -98,9 +103,9 @@ class Excel extends \Trunk\Wibbler\Modules\base {
 					$current_col++;
 				}
 
-				for( $i = $row_index; $i < ($row_index+$num_rows) ; $i++ ) {
-					if( $num_cols ) {
-						for( $j = $current_col; $j < ($current_col+$num_cols); $j++ ) {
+				for ( $i = $row_index; $i < ( $row_index + $num_rows ); $i++ ) {
+					if ( $num_cols ) {
+						for ( $j = $current_col; $j < ( $current_col + $num_cols ); $j++ ) {
 							$header_rows[ $i ][ $j ] = "Span";
 						}
 					} else {
