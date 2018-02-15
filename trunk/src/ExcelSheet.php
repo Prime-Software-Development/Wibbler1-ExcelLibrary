@@ -2,6 +2,7 @@
 namespace Trunk\ExcelLibrary\Excel;
 
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
+use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 
 class ExcelSheet {
 //https://github.com/PHPOffice/PHPExcel/blob/develop/Documentation/markdown/Overview/08-Recipes.md
@@ -119,16 +120,16 @@ class ExcelSheet {
 		$data_format = $this->cell_formats[$cell_key]->data_format;
 		switch ($data_format) {
 			case "currency":
-				$active_sheet->getStyle($cell_reference)->getNumberFormat()->setFormatCode(\PHPExcel_Style_NumberFormat::FORMAT_NUMBER_00);
+				$active_sheet->getStyle($cell_reference)->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_NUMBER_00);
 				break;
 			case "date":
-				$active_sheet->getStyle($cell_reference)->getNumberFormat()->setFormatCode(\PHPExcel_Style_NumberFormat::FORMAT_DATE_DDMMYYYY);
+				$active_sheet->getStyle($cell_reference)->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_DATE_DDMMYYYY);
 				break;
 			case "datetime":
-				$active_sheet->getStyle($cell_reference)->getNumberFormat()->setFormatCode(\PHPExcel_Style_NumberFormat::FORMAT_DATE_DATETIME);
+				$active_sheet->getStyle($cell_reference)->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_DATE_DATETIME);
 				break;
 			case "time":
-				$active_sheet->getStyle($cell_reference)->getNumberFormat()->setFormatCode(\PHPExcel_Style_NumberFormat::FORMAT_DATE_TIME3);
+				$active_sheet->getStyle($cell_reference)->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_DATE_TIME3);
 				break;
 		}
 	}
