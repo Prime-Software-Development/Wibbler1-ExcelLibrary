@@ -1,10 +1,12 @@
 <?php
 namespace Trunk\ExcelLibrary\Excel;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Cell\DataType;
 use PhpOffice\PhpSpreadsheet\Style\Color;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
+use PhpOffice\PhpSpreadsheet\Style\Aligntment;
+use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
-
 require_once( __dir__ . '/ExcelSheet.php' );
 
 class Excel extends \Trunk\Wibbler\Modules\base {
@@ -283,7 +285,7 @@ class Excel extends \Trunk\Wibbler\Modules\base {
 						$merge_cells = $columnLetter . $current_row_num . ":" . ExcelSheet::get_letter_from_number( $header_cell->start_col + $header_cell->col_span - 1 ) . ( $current_row_num + $header_cell->row_span - 1 );
 						// Set the spanning
 						$active_sheet->mergeCells( $merge_cells );
-						$active_sheet->getStyle( $merge_cells )->getAlignment()->setHorizontal( \PHPExcel_Style_Alignment::HORIZONTAL_CENTER );
+						$active_sheet->getStyle( $merge_cells )->getAlignment()->setHorizontal(  Alignment::HORIZONTAL_CENTER );
 					}
 
 					$column_index += $header_cell->col_span;
@@ -373,16 +375,16 @@ class Excel extends \Trunk\Wibbler\Modules\base {
 							$timestamp = strtotime( $dataObject[ $columnDataKey ] ) + 3600;
 							if ( $timestamp % ( 24 * 3600 ) == 3600 )
 								$timestamp = $timestamp - 3600;
-							$active_excel_sheet->SetCellValue( $columnLetter . $rowNumber, \PHPExcel_Shared_Date::PHPToExcel( $timestamp ) );
+							$active_excel_sheet->SetCellValue( $columnLetter . $rowNumber, \PhpOffice\PhpSpreadsheet\Shared\Date::PHPToExcel( $timestamp ) );
 							$active_excel_sheet->getStyle( $columnLetter . $rowNumber )->getNumberFormat()->setFormatCode( 'd mmm yyyy' );
 							break;
 						case 'Time':
 							//Enter data for this row
 							$active_excel_sheet->SetCellValue( $columnLetter . $rowNumber, $this->time_to_excel( $dataObject[ $columnDataKey ] ) );
-							$active_excel_sheet->getStyle( $columnLetter . $rowNumber )->getNumberFormat()->setFormatCode( \PHPExcel_Style_NumberFormat::FORMAT_DATE_TIME3 );
+							$active_excel_sheet->getStyle( $columnLetter . $rowNumber )->getNumberFormat()->setFormatCode( NumberFormat::FORMAT_DATE_TIME3 );
 							break;
 						case 'Text':
-							$active_excel_sheet->SetCellValueExplicit( $columnLetter . $rowNumber, $dataObject[ $columnDataKey ], \PHPExcel_Cell_DataType::TYPE_STRING );
+							$active_excel_sheet->SetCellValueExplicit( $columnLetter . $rowNumber, $dataObject[ $columnDataKey ], DataType::TYPE_STRING );
 //									$active_sheet->SetCellValue($columnLetter . $rowNumber, $dataObject[ $columnDataKey ]);
 //									$active_sheet->getStyle($columnLetter . $rowNumber)->getNumberFormat()->setFormatCode('0');
 							break;

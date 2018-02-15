@@ -1,5 +1,7 @@
 <?php
 namespace Trunk\ExcelLibrary\Excel;
+use PhpOffice\PhpSpreadsheet\Style\Border;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
 
 class ExcelFormats {
 	var $font_colour = null;
@@ -17,7 +19,7 @@ class ExcelFormats {
 
 		if ($this->background_colour != null) {
 			$result['fill'] = array(
-				'type' => \PHPExcel_Style_Fill::FILL_SOLID,
+				'type' => Fill::FILL_SOLID,
 				'startcolor' => array(
 					'argb' => 'FF' . $this->background_colour
 				)
@@ -27,19 +29,19 @@ class ExcelFormats {
 		if ( $this->use_border != null ) {
 			$borders_array = [];
 			if ( strpos( $this->use_border, "left" ) !== false ) {
-				$borders_array[ 'left' ] = [ 'style' => \PHPExcel_Style_Border::BORDER_THIN ];
+				$borders_array[ 'left' ] = [ 'style' => Border::BORDER_THIN ];
 			}
 			if ( strpos( $this->use_border, "right" ) !== false ) {
-				$borders_array[ 'right' ] = [ 'style' => \PHPExcel_Style_Border::BORDER_THIN ];
+				$borders_array[ 'right' ] = [ 'style' => Border::BORDER_THIN ];
 			}
 			if ( strpos( $this->use_border, "top" ) !== false ) {
-				$borders_array[ 'top' ] = [ 'style' => \PHPExcel_Style_Border::BORDER_THIN ];
+				$borders_array[ 'top' ] = [ 'style' => Border::BORDER_THIN ];
 			}
 			if ( strpos( $this->use_border, "bottom" ) !== false ) {
-				$borders_array[ 'bottom' ] = [ 'style' => \PHPExcel_Style_Border::BORDER_THIN ];
+				$borders_array[ 'bottom' ] = [ 'style' => Border::BORDER_THIN ];
 			}
 			if ( strpos( $this->use_border, "all" ) !== false ) {
-				$borders_array[ 'allborders' ] = [ 'style' => \PHPExcel_Style_Border::BORDER_THIN ];
+				$borders_array[ 'allborders' ] = [ 'style' => Border::BORDER_THIN ];
 			}
 			$result[ 'borders' ] = $borders_array;
 		}
