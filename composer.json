@@ -1,12 +1,12 @@
 {
-  "name": "trunk/excellibrary",
+  "name": "primesoftwaredevelopment/excellibrary",
   "type": "library",
-  "description": "TrunkSoftware Excel Library for Wibbler framework",
-  "homepage": "http://www.trunknetworks.com/",
+  "description": "Prime Software Development Excel Library for the Wibbler framework",
+  "homepage": "http://www.primesoftwaredevelopment.co.uk/",
   "authors": [
 	{
 	  "name": "Chris Weller",
-	  "email": "chris.weller@trunknetworks.com"
+	  "email": "chris@primesoftwaredevelopment.co.uk"
 	}
   ],
   "require": {
