@@ -12,8 +12,10 @@ require_once( __dir__ . '/ExcelSheet.php' );
 class Excel extends \Trunk\Wibbler\Modules\base {
 
 	var $author = "Wibbler";
-	var $title = "Wibbler Report";
 	var $description = "Automatically generated from Wibbler";
+
+	private $company = '';
+	private $title = "Wibbler Report";
 
 	/**
 	 * @var ExcelSheet[]
@@ -32,8 +34,22 @@ class Excel extends \Trunk\Wibbler\Modules\base {
 		$this->sheet = array();
 	}
 
-	public function Excel() {
+	#region Setters
+	public function setAuthor( $author ) {
+		$this->author = $author;
+		return $this;
 	}
+
+	public function setCompany( $company ) {
+		$this->company = $company;
+		return $this;
+	}
+
+	public function setDescription( $description ) {
+		$this->description = $description;
+		return $this;
+	}
+	#endregion
 
 	public function loadFromHTML( $html ) {
 		$a = new \DOMDocument();
@@ -212,6 +228,7 @@ class Excel extends \Trunk\Wibbler\Modules\base {
 		$objPHPExcel->getProperties()->setTitle( $this->title );
 		$objPHPExcel->getProperties()->setSubject( $this->title );
 		$objPHPExcel->getProperties()->setDescription( $this->description );
+		$objPHPExcel->getProperties()->setCompany( $this->company );
 
 		$current_sheet_index = 0;
 		foreach ( $this->sheet as $thisSheet ) {
