@@ -197,26 +197,11 @@ class Excel extends \Trunk\Wibbler\Modules\base {
 		}
 	}
 
-	public function create( $output_to = null, $report_name = 'IMP_Report' ) {
+	public function create( $output_to = null, $report_name = 'Report' ) {
 		$this->title = $report_name;
 
 		while ( ob_get_level() > 0 ) {
 			ob_end_clean();
-		}
-
-		/*
-				// Turn off error reporting
-				ini_set('display_errors', 0);
-				ini_set('error_reporting', ~E_ALL);
-		*/
-		/** PHPExcel -    prevent recursion issues */
-		if ( !class_exists( 'PHPExcel' ) ) {
-#			require 'PHPExcel/PHPExcel.php';
-		}
-
-		/** PHPExcel_Writer_Excel2007  -    prevent recursion issues */
-		if ( !class_exists( 'PHPExcel_Writer_Excel2007' ) ) {
-#			include 'PHPExcel/PHPExcel/Writer/Excel2007.php';
 		}
 
 		// Create new PHPExcel object
@@ -337,7 +322,7 @@ class Excel extends \Trunk\Wibbler\Modules\base {
 			//Set headers so output is file
 			header( 'Content-type: application/ms-excel' );
 			$now = new \DateTime();
-			header( 'Content-Disposition: attachment; filename="' . $report_name . ' ' . $now->format( 'Y-m-d H:i' ) . '.xlsx"' );
+			header( 'Content-Disposition: attachment; filename="' . substr( $report_name, 0, 31 ) . ' ' . $now->format( 'Y-m-d H:i' ) . '.xlsx"' );
 			flush();
 
 			//Output document
