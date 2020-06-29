@@ -58,7 +58,11 @@ class Excel extends \Trunk\Wibbler\Modules\base {
 		foreach ( $a->getElementsByTagName( 'table' ) as $table_index => $table ) {
 			if ( $table->hasAttribute( 'data-excel-sheet' ) ) {
 				$this->sheet[ $table_index ] = new \Trunk\ExcelLibrary\Excel\ExcelSheet();
-				$this->sheet[ $table_index ]->sheetTitle = preg_replace( "/[^ \\w]+/", " ", $table->getAttribute( 'data-excel-sheet-title' ) );
+				$sheetName = $table->getAttribute( 'data-excel-sheet-title' );
+				if ( empty( $sheetName ) ) {
+					$sheetName = "Sheet" . $table_index;
+				}
+				$this->sheet[ $table_index ]->sheetTitle = preg_replace( "/[^ \\w]+/", " ", substr( $sheetName, 0, 31 ) );
 				$this->sheet[ $table_index ]->sheetDescription = $table->getAttribute( 'data-excel-sheet-description' );
 
 				// Get the thead's row object (only the first one though)
