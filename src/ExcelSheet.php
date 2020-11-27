@@ -131,6 +131,9 @@ class ExcelSheet {
 			case "time":
 				$active_sheet->getStyle($cell_reference)->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_DATE_TIME3);
 				break;
+			default:
+				$active_sheet->getStyle($cell_reference)->getNumberFormat()->setFormatCode($data_format);
+				break;
 		}
 	}
 
