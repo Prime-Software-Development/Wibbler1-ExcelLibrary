@@ -1,6 +1,7 @@
 <?php
 namespace Trunk\ExcelLibrary\Excel;
 use PhpOffice\PhpSpreadsheet\Style\Border;
+use PhpOffice\PhpSpreadsheet\Style\Conditional;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 
 class ExcelFormats {
@@ -9,6 +10,59 @@ class ExcelFormats {
 	var $strike_through = false;
 	var $data_format = null;
 	var $use_border = null;
+
+	private $dropdownOptions = false;
+	public function setDropdownOptions($value) {
+		$this->dropdownOptions = $value;
+		return $this;
+	}
+	public function getDropdownOptions() {
+		return $this->dropdownOptions;
+	}
+
+	private $conditionalFormatting = false;
+	public function setConditionalFormatting( $value, $background ) {
+
+		$condition = '';
+		switch( substr($value, 0, 1 ) ) {
+			case "!":
+				$condition = Conditional::OPERATOR_NOTEQUAL;
+				break;
+			case "<":
+				$condition = Conditional::OPERATOR_LESSTHAN;
+				break;
+			case ">":
+				$condition = Conditional::OPERATOR_GREATERTHAN;
+				break;
+			case "=":
+				$condition = Conditional::OPERATOR_EQUAL;
+				break;
+		}
+
+		$this->conditionalFormatting = [
+			'condition' => $condition,
+			'match' => substr( $value, 1 ),
+			'style' => [
+				'font' => [
+					'strike' => true,
+				],
+				'fill' => [
+					'fillType' => Fill::FILL_SOLID,
+					'fill' => Fill::FILL_SOLID,
+					'color' => [
+						'argb' => 'FF' . $background,
+					],
+					'startColor' => [
+						'argb' => 'FF' . $background,
+					]
+				]
+			],
+		];
+		return $this;
+	}
+	public function getConditionalFormatting() {
+		return $this->conditionalFormatting;
+	}
 
 	public function get_style_array() {
 		$result = array();
@@ -19,8 +73,8 @@ class ExcelFormats {
 
 		if ($this->background_colour != null) {
 			$result['fill'] = array(
-				'type' => Fill::FILL_SOLID,
-				'startcolor' => array(
+				'fillType' => Fill::FILL_SOLID,
+				'startColor' => array(
 					'argb' => 'FF' . $this->background_colour
 				)
 			);

@@ -2,7 +2,11 @@
 namespace Trunk\ExcelLibrary\Excel;
 
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
+use PhpOffice\PhpSpreadsheet\Cell\DataValidation;
+use PhpOffice\PhpSpreadsheet\Style\Color;
+use PhpOffice\PhpSpreadsheet\Style\Conditional;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
+use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 class ExcelSheet {
 //https://github.com/PHPOffice/PHPExcel/blob/develop/Documentation/markdown/Overview/08-Recipes.md
@@ -27,6 +31,9 @@ class ExcelSheet {
 	var $formatMap;
 
 	var $row_formats = array();
+	/**
+	 * @var ExcelFormats[]
+	 */
 	var $cell_formats = array();
 
 	var $end_column_number = 0;
@@ -80,10 +87,10 @@ class ExcelSheet {
 	/**
 	 * Adds formatting for the given cell, read from the given element (normally a td)
 	 * @param type $cell_key
-	 * @param type $element
+	 * @param \DOMNode $element
 	 * @return type
 	 */
-	public function add_cell_format($cell_key, $element) {
+	public function add_cell_format($cell_key, \DOMNode $element) {
 		$format = $this->_get_formatting($element);
 
 		if ($format == null)
@@ -108,10 +115,12 @@ class ExcelSheet {
 
 	/**
 	 * Set the format on the given cell for this cell
+	 * @param Worksheet $active_sheet
 	 * @param type $row_number
 	 * @param type $cell
 	 */
 	public function set_cell_format($active_sheet, $cell_reference, $cell_key) {
+
 		if (!isset($this->cell_formats[$cell_key]))
 			return;
 
@@ -131,6 +140,39 @@ class ExcelSheet {
 			case "time":
 				$active_sheet->getStyle($cell_reference)->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_DATE_TIME3);
 				break;
+			default:
+				$active_sheet->getStyle($cell_reference)->getNumberFormat()->setFormatCode($data_format);
+				break;
+		}
+
+		// If there are dropdown options
+		if ( !empty( $this->cell_formats[ $cell_key ]->getDropdownOptions() ) ) {
+			// Get the validation for the cell
+			$cellValidation = $active_sheet->getDataValidation($cell_reference);
+			$cellValidation->setType( DataValidation::TYPE_LIST )
+				->setErrorStyle( DataValidation::STYLE_INFORMATION )
+				->setAllowBlank( false )
+				->setShowInputMessage( true )
+				->setShowErrorMessage( true )
+				->setShowDropDown( true )
+				->setErrorTitle( 'Input Error' )
+				->setError( 'Value is not in list' )
+				->setPromptTitle( 'Pick from list' )
+				->setPrompt( 'Please pick a value from the drop-down list.' )
+				->setFormula1( '"' . $this->cell_formats[ $cell_key ]->getDropdownOptions() . '"');
+		}
+		// If there are conditional formatting
+		if ( !empty( $this->cell_formats[ $cell_key ]->getConditionalFormatting() ) ) {
+			$cellCondition = $this->cell_formats[ $cell_key ]->getConditionalFormatting();
+			$conditional = new Conditional();
+			$conditional->setConditionType( Conditional::CONDITION_CELLIS )
+				->setOperatorType( $cellCondition[ 'condition' ] )
+				->setConditions( $cellCondition[ 'match' ])
+				->getStyle()
+				->applyFromArray( $cellCondition['style'] );
+			$conditionalStyles = $active_sheet->getConditionalStyles( $cell_reference );
+			$conditionalStyles[] = $conditional;
+			$active_sheet->setConditionalStyles( $cell_reference, $conditionalStyles );
 		}
 	}
 
@@ -143,6 +185,16 @@ class ExcelSheet {
 		// Find the element colour (if defined)
 		$element_colour = $element->getAttribute('data-excel-colour');
 		$element_font_colour = $element->getAttribute('data-excel-font-colour');
+
+		if ( $element->getAttribute('data-show-dropdown') ) {
+			$options = $element->getAttribute( 'data-options' );
+			$format->setDropdownOptions( $options );
+			$format_exists = true;
+		}
+		if ( $element->getAttribute( 'data-conditional-format-condition' ) ) {
+			$format->setConditionalFormatting( $element->getAttribute( 'data-conditional-format-condition' ), $element->getAttribute( 'data-conditional-style' ) );
+			$format_exists = true;
+		}
 
 		// If there is a element colour
 		if ($element_font_colour != '' && $element_font_colour != '') {
