@@ -206,8 +206,8 @@ class Excel extends \Trunk\Wibbler\Modules\base {
 
 		$num_rows = count( $this->sheet[ $table_index ]->data );
 		$footer_format = new ExcelFormats();
-		$footer_format->background_colour = 'E0E0FF';
-		$footer_format->bold = true;
+		$footer_format->setBackgroundColour( 'E0E0FF' );
+		$footer_format->setBold( true );
 		$this->sheet[ $table_index ]->set_footer_format( $num_rows, $footer_format );
 
 		foreach ( $footer_row->getElementsByTagName( 'td' ) as $col_index => $tf ) {

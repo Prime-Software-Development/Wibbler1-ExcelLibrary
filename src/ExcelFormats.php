@@ -5,8 +5,6 @@ use PhpOffice\PhpSpreadsheet\Style\Conditional;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 
 class ExcelFormats {
-	var $font_colour = null;
-	var $background_colour = null;
 	var $strike_through = false;
 	var $data_format = null;
 	var $use_border = null;
@@ -64,6 +62,24 @@ class ExcelFormats {
 		return $this->conditionalFormatting;
 	}
 
+	private $bold = false;
+	public function setBold( bool $value ) {
+		$this->bold = $value;
+		return $this;
+	}
+
+	private $font_colour = null;
+	public function setFontColour( string $colour ) {
+		$this->font_colour = $colour;
+		return $this;
+	}
+
+	var $background_colour = null;
+	public function setBackgroundColour( string $colour ) {
+		$this->background_colour = $colour;
+		return $this;
+	}
+
 	public function get_style_array() {
 		$result = array();
 
@@ -102,6 +118,9 @@ class ExcelFormats {
 
 		if ( $this->font_colour ) {
 			$result['font']['color'] = array( 'argb' => 'FF' . $this->font_colour );
+		}
+		if ( $this->bold ) {
+			$result[ 'font' ][ 'bold' ] = true;
 		}
 
 		return $result;

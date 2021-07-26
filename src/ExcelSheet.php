@@ -176,7 +176,11 @@ class ExcelSheet {
 		}
 	}
 
-
+	/**
+	 * Get the formatting from a specific html element
+	 * @param $element
+	 * @return ExcelFormats|null
+	 */
 	private function _get_formatting($element) {
 		// Create a new format object
 		$format = new ExcelFormats();
@@ -199,14 +203,14 @@ class ExcelSheet {
 		// If there is a element colour
 		if ($element_font_colour != '' && $element_font_colour != '') {
 			// Note it within the sheet specification
-			$format->font_colour = $element_font_colour;
+			$format->setFontColour( $element_font_colour );
 			$format_exists = true;
 		}
 
 		// If there is a element colour
 		if ($element_colour != '' && $element_colour != '') {
 			// Note it within the sheet specification
-			$format->background_colour = $element_colour;
+			$format->setBackgroundColour( $element_colour );
 			$format_exists = true;
 		}
 
@@ -241,5 +245,14 @@ class ExcelSheet {
 			// Return null
 			return null;
 		}
+	}
+
+	/**
+	 * Set the format for the footer row
+	 * @param $row
+	 * @param ExcelFormats $format
+	 */
+	public function set_footer_format( $row, ExcelFormats $format ) {
+		$this->row_formats[$row] = $format;
 	}
 }
