@@ -217,7 +217,7 @@ class Excel extends \Trunk\Wibbler\Modules\base {
 		}
 	}
 
-	public function create( $output_to = null, $report_name = 'Report' ) {
+	public function create( $output_to = null, $report_name = 'Report', $simpleExport = false ) {
 		$this->title = $report_name;
 
 		while ( ob_get_level() > 0 ) {
@@ -248,29 +248,35 @@ class Excel extends \Trunk\Wibbler\Modules\base {
 			if ( $thisSheet->sheetTitle == "" )
 				$thisSheet->sheetTitle = $this->title;
 
-			//Add head rows
-			// Merge the cells
-			$active_sheet->mergeCells( "A1:" . $endColumnLetter . "1" );
-			$active_sheet->mergeCells( "A2:" . $endColumnLetter . "2" );
-			$active_sheet->mergeCells( "A3:" . $endColumnLetter . "3" );
+			if ( ! $simpleExport ) {
+				//Add head rows
+				// Merge the cells
+				$active_sheet->mergeCells( "A1:" . $endColumnLetter . "1" );
+				$active_sheet->mergeCells( "A2:" . $endColumnLetter . "2" );
+				$active_sheet->mergeCells( "A3:" . $endColumnLetter . "3" );
 
-			// Set the header cell contents
-			$active_sheet->SetCellValue( "A1", $this->title );
-			$active_sheet->SetCellValue( "A2", $thisSheet->sheetTitle );
-			$active_sheet->SetCellValue( "A3", $thisSheet->sheetDescription );
+				// Set the header cell contents
+				$active_sheet->SetCellValue( "A1", $this->title );
+				$active_sheet->SetCellValue( "A2", $thisSheet->sheetTitle );
+				$active_sheet->SetCellValue( "A3", $thisSheet->sheetDescription );
 
-			// Set the background styling for the header cells
-			$active_sheet->getStyle( "A1:A4" )->getFill()->setFillType( Fill::FILL_SOLID );
-			$active_sheet->getStyle( "A1:A4" )->getFill()->getStartColor()->setARGB( Color::COLOR_WHITE );
+				// Set the background styling for the header cells
+				$active_sheet->getStyle( "A1:A4" )->getFill()->setFillType( Fill::FILL_SOLID );
+				$active_sheet->getStyle( "A1:A4" )->getFill()->getStartColor()->setARGB( Color::COLOR_WHITE );
 
-			// Style the header cells
-			$active_sheet->getStyle( 'A1' )->getFont()->setSize( 20 );
-			$active_sheet->getStyle( 'A1' )->getFont()->setBold( true );
-			$active_sheet->getStyle( 'A2' )->getFont()->setSize( 14 );
-			$active_sheet->getStyle( 'A2' )->getFont()->setBold( true );
+				// Style the header cells
+				$active_sheet->getStyle( 'A1' )->getFont()->setSize( 20 );
+				$active_sheet->getStyle( 'A1' )->getFont()->setBold( true );
+				$active_sheet->getStyle( 'A2' )->getFont()->setSize( 14 );
+				$active_sheet->getStyle( 'A2' )->getFont()->setBold( true );
 
-			// Define which row the table headers are
-			$headerRowNum = 5;
+				// Define which row the table headers are
+				$headerRowNum = 5;
+			}
+			else {
+				// Define which row the table headers are
+				$headerRowNum = 1;
+			}
 			$current_row_num = $headerRowNum;
 
 			foreach ( $thisSheet->header_rows as $header_row ) {
@@ -317,8 +323,10 @@ class Excel extends \Trunk\Wibbler\Modules\base {
 			$active_sheet->getStyle( "A" . ( $rowNumber ) . ":" . $endColumnLetter . ( $rowNumber ) )->getFill()->setFillType( Fill::FILL_SOLID );
 			$active_sheet->getStyle( "A" . ( $rowNumber ) . ":" . $endColumnLetter . ( $rowNumber ) )->getFill()->getStartColor()->setARGB( 'FFE0E0FF' );
 
-			$active_sheet->mergeCells( "A" . ( $rowNumber + 2 ) . ":" . $endColumnLetter . ( $rowNumber + 2 ) );
-			$active_sheet->SetCellValue( "A" . ( $rowNumber + 2 ), "Created " . date( 'd/m/Y H:i' ) );
+			if ( ! $simpleExport ) {
+				$active_sheet->mergeCells( "A" . ( $rowNumber + 2 ) . ":" . $endColumnLetter . ( $rowNumber + 2 ) );
+				$active_sheet->SetCellValue( "A" . ( $rowNumber + 2 ), "Created " . date( 'd/m/Y H:i' ) );
+			}
 
 			// Name sheet
 			$active_sheet->setTitle( ( $thisSheet->tabTitle == null ? $thisSheet->sheetTitle : $thisSheet->tabTitle ) );
