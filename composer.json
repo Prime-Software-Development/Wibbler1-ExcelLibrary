@@ -10,8 +10,7 @@
 	}
   ],
   "require": {
-	"php": ">=7.3",
-	"phpoffice/phpspreadsheet": "1.*"
+	"phpoffice/phpspreadsheet": "*"
   },
   "autoload": {
 	"classmap": [
